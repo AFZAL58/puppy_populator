@@ -31,13 +31,14 @@ def query_one():
 def query_two():
     """Query all of the puppies that are less than 6 months old organized by the youngest first"""
     today = datetime.date.today()
-    result = session.query(Puppy.name, Puppy.dateOfBirth).order_by(Puppy.dateOfBirth.desc()).all()
+    sixMonthsAgo = today - datetime.timedelta(days = 365 / 2)
+    result = session.query(Puppy.name, Puppy.dateOfBirth)\
+        .filter(Puppy.dateOfBirth >= sixMonthsAgo)\
+        .order_by(Puppy.dateOfBirth.desc())
 
     # print the result with puppy name and dob
     for item in result:
-        puppy_months = diff_month(today, item[1])
-        if puppy_months < 6:
-            print "{name}: {months}".format(name=item[0], months=puppy_months)
+        print "{name}: {dob}".format(name=item[0], dob=item[1])
 
 def query_three():
     """Query all puppies by ascending weight"""
@@ -52,12 +53,6 @@ def query_four():
     for item in result:
         print item[0].id, item[0].name, item[1]
 
-
-# Helpers methods
-def diff_month(d1, d2):
-    """calculate number of months by counting day from today"""
-    delta = d1 - d2
-    return delta.days / 30
 
 # query_one()
 # query_two()
